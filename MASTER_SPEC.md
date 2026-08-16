@@ -1046,3 +1046,16 @@ build_deck_v3.py composed slide 6: 3×3 layout inside stage cards (lq→pred→g
 full GPT-locked captions in the strip (TextBox 27) + rule disclosure. Verified:
 9 pictures placed, 0 placeholders left, 10 FILLs, 0 slots, all lock strings,
 0.37 MB. Deck deliverable: docs/DrishtiNet_KLA_PS01_final.pptx.
+
+## §13 — SUBMISSION RECEIPT: repo live (2026-08-16, user console verified)
+
+git init → add -A → commit (locked message) → branch main → push: 70 files / 25.0 MiB
+to github.com/Adityag476/DRISHTI-Net (Public). Hygiene confirmed from the raw log:
+weights/drishti_net.pt committed; outputs/restored_train (840 MB) and runs/ correctly
+gitignored (absent from the commit); stale weights smoke file removed; reports/ +
+panels + receipts all present; LF→CRLF warnings are cosmetic Windows notices only.
+One stray artifact class noted: docs/panels/panel_003197..003199_* (9 PNGs) are the
+SUPERSEDED pre-spread panel set, committed before the A/B/C canonical set existed —
+cleanup queued as an optional commit (git rm docs/panels/panel_003*.png); the A/B/C
+trio + panels_index.txt remain the canonical, reviewer-locked panels. Deck FILLs,
+video, and PDF export are the only items left; this entry closes the technical trail.
