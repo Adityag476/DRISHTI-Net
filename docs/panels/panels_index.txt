@@ -1,0 +1,5 @@
+A_typical = 003193: measured psnr=29.07 dB ssim=0.9029
+B_strongest = 003107: measured psnr=37.22 dB ssim=0.9538
+C_challenging = 003136: measured psnr=23.87 dB ssim=0.7097
+(holdout n=160, median psnr=29.01 dB; PNGs display-normalized)
+(B rule: strongest PSNR among frames >= P25 Sobel energy, floor=0.070372; higher-PSNR flat frame(s) skipped: 003120.npy, 003126.npy, 003127.npy, 003125.npy, 003049.npy, 003050.npy, 003106.npy, 003051.npy, 003119.npy, 003117.npy; their texture percentiles: 003120.npy tex=P6.9; 003126.npy tex=P7.5; 003127.npy tex=P6.2; 003125.npy tex=P4.4; 003049.npy tex=P1.9; 003050.npy tex=P1.2; 003106.npy tex=P17.5; 003051.npy tex=P0.6; 003119.npy tex=P3.8; 003117.npy tex=P0.0)

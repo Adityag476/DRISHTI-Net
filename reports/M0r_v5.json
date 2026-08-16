@@ -1,0 +1,156 @@
+{
+  "weights": "runs\\M0r_v5\\best.pt",
+  "holdout": 160,
+  "aggregate": {
+    "psnr": {
+      "mean": 29.319053078502566,
+      "median": 28.977833644554742
+    },
+    "ssim": {
+      "mean": 0.7910659740096715,
+      "median": 0.8392238174327272
+    },
+    "edge_ssim": {
+      "mean": 0.5681141862679784,
+      "median": 0.6347563468915003
+    },
+    "edge_psnr": {
+      "mean": 25.413707916361982,
+      "median": 24.483753867203053
+    },
+    "flat_artifact": {
+      "mean": 0.023159807118645404,
+      "median": 0.020736489444971085
+    },
+    "patch_ssim_mean": {
+      "mean": 0.7938186361408918,
+      "median": 0.8394602843353671
+    },
+    "patch_ssim_worst10": {
+      "mean": 0.735115066241641,
+      "median": 0.7734312298707183
+    },
+    "lpips": {
+      "mean": 0.36983752707019446,
+      "median": 0.3486134558916092
+    }
+  },
+  "latency": {
+    "n": 100,
+    "median_ms": 47.34414999256842,
+    "mean_ms": 37.71403500228189,
+    "device": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "worst10_by_psnr": [
+    {
+      "psnr": 21.548,
+      "ssim": 0.284,
+      "edge_ssim": 0.1058,
+      "edge_psnr": 21.3587,
+      "flat_artifact": 0.0829,
+      "patch_ssim_mean": 0.2831,
+      "patch_ssim_worst10": 0.2513,
+      "lpips": 0.4813,
+      "file": "003044.npy"
+    },
+    {
+      "psnr": 22.2341,
+      "ssim": 0.2109,
+      "edge_ssim": 0.0277,
+      "edge_psnr": 20.8332,
+      "flat_artifact": 0.0677,
+      "patch_ssim_mean": 0.2127,
+      "patch_ssim_worst10": 0.139,
+      "lpips": 0.6583,
+      "file": "003069.npy"
+    },
+    {
+      "psnr": 22.272,
+      "ssim": 0.7354,
+      "edge_ssim": 0.5191,
+      "edge_psnr": 20.8792,
+      "flat_artifact": 0.068,
+      "patch_ssim_mean": 0.7364,
+      "patch_ssim_worst10": 0.6763,
+      "lpips": 0.3177,
+      "file": "003060.npy"
+    },
+    {
+      "psnr": 22.4066,
+      "ssim": 0.7181,
+      "edge_ssim": 0.5993,
+      "edge_psnr": 18.8373,
+      "flat_artifact": 0.0426,
+      "patch_ssim_mean": 0.7239,
+      "patch_ssim_worst10": 0.6439,
+      "lpips": 0.3077,
+      "file": "003084.npy"
+    },
+    {
+      "psnr": 22.4365,
+      "ssim": 0.7031,
+      "edge_ssim": 0.5016,
+      "edge_psnr": 19.1732,
+      "flat_artifact": 0.0332,
+      "patch_ssim_mean": 0.7169,
+      "patch_ssim_worst10": 0.5844,
+      "lpips": 0.4164,
+      "file": "003179.npy"
+    },
+    {
+      "psnr": 22.5695,
+      "ssim": 0.6382,
+      "edge_ssim": 0.4769,
+      "edge_psnr": 19.4319,
+      "flat_artifact": 0.054,
+      "patch_ssim_mean": 0.6363,
+      "patch_ssim_worst10": 0.5832,
+      "lpips": 0.3525,
+      "file": "003102.npy"
+    },
+    {
+      "psnr": 22.849,
+      "ssim": 0.6431,
+      "edge_ssim": 0.4849,
+      "edge_psnr": 19.9229,
+      "flat_artifact": 0.0538,
+      "patch_ssim_mean": 0.6496,
+      "patch_ssim_worst10": 0.5975,
+      "lpips": 0.3493,
+      "file": "003101.npy"
+    },
+    {
+      "psnr": 23.0433,
+      "ssim": 0.6994,
+      "edge_ssim": 0.4972,
+      "edge_psnr": 19.7865,
+      "flat_artifact": 0.0326,
+      "patch_ssim_mean": 0.7072,
+      "patch_ssim_worst10": 0.5917,
+      "lpips": 0.3975,
+      "file": "003178.npy"
+    },
+    {
+      "psnr": 23.1349,
+      "ssim": 0.6554,
+      "edge_ssim": 0.5221,
+      "edge_psnr": 19.8028,
+      "flat_artifact": 0.0473,
+      "patch_ssim_mean": 0.657,
+      "patch_ssim_worst10": 0.5966,
+      "lpips": 0.3758,
+      "file": "003156.npy"
+    },
+    {
+      "psnr": 23.2003,
+      "ssim": 0.7081,
+      "edge_ssim": 0.5134,
+      "edge_psnr": 19.9416,
+      "flat_artifact": 0.0332,
+      "patch_ssim_mean": 0.7178,
+      "patch_ssim_worst10": 0.604,
+      "lpips": 0.3735,
+      "file": "003177.npy"
+    }
+  ]
+}

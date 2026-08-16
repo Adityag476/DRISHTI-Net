@@ -1,0 +1,26 @@
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# training runs / checkpoints (final weights in weights/ are committed)
+runs/
+*.ckpt
+*.log
+
+# full-set restorations (3,200 .npy ~= 840 MB) — one command reproduces them
+outputs/restored_train/
+
+# local data (never commit datasets)
+demo_data/
+dataset/
+DATA/
+audit_report/
+audit_demo/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

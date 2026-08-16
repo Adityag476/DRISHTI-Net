@@ -1,0 +1,8 @@
+# DRISHTI-Net — training/eval environment (pin after Day-2 freeze via `pip freeze`)
+torch>=2.1
+numpy>=1.24
+opencv-python>=4.8          # or opencv-python-headless on servers
+tqdm>=4.65
+pytorch-msssim>=1.0         # MS-SSIM loss term (train only)
+lpips>=0.1.4                # metric-only (evaluation reports)
+matplotlib>=3.7             # Day-0 data audit plots (scripts/day0_audit.py)
