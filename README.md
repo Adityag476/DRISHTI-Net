@@ -157,7 +157,7 @@ Training arithmetic (Charbonnier + Sobel + FFT-mag weights, gate rule, ladder le
 
 ## 🎬 Demo
 
-[Watch the 90-second run video](PASTE-YOUTUBE-LINK-HERE) ← *replace with the upload link*
+[▶ Watch the 62-second run video](https://youtu.be/XoaiKg5po4c) — zero-edit `evaluate.py` live restore + the measured reports
 
 ## 📄 Deck & Paper Trail
 

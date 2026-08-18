@@ -1102,3 +1102,16 @@ free" are banned from narration; (2) denoising claims are made ONLY with real-da
 panels/reports; (3) the docs/panels A/B/C set remains the quality showcase. The
 post-deadline demo-engine overhaul (§13.2 queue) is now a PRIORITY item, since the
 install-check asset currently under-sells and partially mis-signals the model.
+
+## §14 — VIDEO LIVE + deck links filled (2026-08-18)
+
+Video uploaded and fetch-verified: youtu.be/XoaiKg5po4c — "Test Drishti-Net", 62 s,
+Public. Deck slide-8 LINK placeholders filled at source (build_deck_v4.py): GitHub
+line → github.com/Adityag476/DRISHTI-Net (live-verified through the whole round),
+Video line → the youtu.be link with ACCURATE 62 s wording (no "fresh-clone" claim —
+the capture uses the existing folder per the approved shot list). README 🎬 Demo
+link swapped to the real URL, marker removed. Deck [FILL]s now 8 — all personal
+team fields only (team name, college, city, contact, 4 member names). Polish
+suggestion logged for the user: retitle the video from "Test Drishti-Net" to a
+judge-facing title + drop the repo link into the video description (30 s in
+YouTube Studio; no re-upload). PDF export (TeamName_KLA_PS01.pdf) is the LAST step.
