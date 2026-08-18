@@ -1,92 +1,168 @@
-# DRISHTI-Net (दृष्टि)
+# 🔍 DRISHTI-Net (दृष्टि)
 
-**D**egradation-aware **R**estoration via **I**mplicit **S**upervision for **H**igh-fidelity **T**echnology **I**nspection.
-KLA i4C Hackathon — PS01: AI-Based Restoration of Degraded Images for Semiconductor Inspection.
+> **One forward pass. Zero edits. Measured, not promised.**
+> Deterministic restoration of degraded semiconductor-inspection images — joint speckle denoise + Gaussian deblur + 2× super-resolution, selected through controlled ablation on real KLA pairs.
 
-One model, one forward pass: joint speckle denoise + Gaussian deblur + 2× super-resolution
-(256²→512² or 128²→256²), grayscale, deterministic, OOD-hardened. ~3.47M parameters.
+![PSNR](https://img.shields.io/badge/PSNR-29.33_dB_holdout-2ecc71?style=flat-square)
+![SSIM](https://img.shields.io/badge/SSIM-0.7913_holdout-0088cc?style=flat-square)
+![Params](https://img.shields.io/badge/Params-3.47_M-9b59b6?style=flat-square)
+![Latency](https://img.shields.io/badge/Latency-16.5_ms%2Fimg_median-f39c12?style=flat-square)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.x-e74c3c?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-95a5a6?style=flat-square)
 
-## 1. Setup (laptop, ~2 minutes)
+**KLA i4C Hackathon · Problem Statement PS01** — AI-Based Restoration of Degraded Images for Semiconductor Inspection ·
+**D**egradation-aware **R**estoration via **I**mplicit **S**upervision for **H**igh-fidelity **T**echnology **I**nspection
 
-Needs Python 3.9+ (3.10/3.11 recommended). Works on Windows, Linux, macOS; NVIDIA GPU optional.
+---
+
+## 🖼️ Panels — the shipped checkpoint's own outputs (never-trained holdout frames)
+
+Selected by **measured rule**, not by eye: **A** = typical (nearest-median PSNR) · **B** = strongest among *textured* frames (Sobel-energy floor ≥ P25 — near-blank frames earn trivially high PSNR and are excluded by rule, skipped frames printed by name) · **C** = challenging (P10).
+
+| Case | Degraded input | DRISHTI-Net output | Ground truth |
+|------|:---:|:---:|:---:|
+| **A — typical** · 003193 | <img src="docs/panels/panel_A_typical_lq.png" width="170"> | <img src="docs/panels/panel_A_typical_pred.png" width="170"> | <img src="docs/panels/panel_A_typical_gt.png" width="170"> |
+| **B — strongest textured** · 003107 | <img src="docs/panels/panel_B_strongest_lq.png" width="170"> | <img src="docs/panels/panel_B_strongest_pred.png" width="170"> | <img src="docs/panels/panel_B_strongest_gt.png" width="170"> |
+| **C — challenging** · 003136 | <img src="docs/panels/panel_C_challenging_lq.png" width="170"> | <img src="docs/panels/panel_C_challenging_pred.png" width="170"> | <img src="docs/panels/panel_C_challenging_gt.png" width="170"> |
+
+| Case | PSNR ↑ | SSIM ↑ |
+|------|-------:|-------:|
+| A — typical | 29.07 dB | 0.9029 |
+| B — strongest textured | 37.22 dB | 0.9538 |
+| C — challenging | 23.87 dB | 0.7097 |
+
+*PNGs are display-normalized renders; every caption number is printed by `scripts/make_panels.py` (receipts: `docs/panels/panels_index.txt`).*
+
+---
+
+## 🚀 What It Does
+
+One model restores a corrupted inspection frame in **a single deterministic forward pass** — no cascade, no generative prior:
+
+| Degradation | Behaviour measured on real data | Design answer |
+|---|---|---|
+| **Multiplicative speckle** | Degraded pixels span **[−0.28, +2.16]** vs GT [0,1] | Range-safe 2-channel encoding `[x/S, log1p(x/S)]`, fixed scale S — **never clips** |
+| **Gaussian haze** | Blur + additive noise (Day-0 census of all 3,200 pairs) | Edge-aware loss terms, gated by isolated ablation arms |
+| **2× resolution loss** | 512²→256² or 256²→128² | PixelShuffle ×2 + global bilinear residual, one joint pass |
+
+Deterministic reconstruction objective — *minimizing* the risk of synthesizing unsupported structures (or erasing real ones). Built for metrology, not for pretty pictures.
+
+---
+
+## ⚡ Quickstart (~2 min)
 
 ```bash
-git clone <this-repo-url> && cd DRISHTI-Net
+git clone https://github.com/Adityag476/DRISHTI-Net.git
+cd DRISHTI-Net
 pip install -r requirements.txt
 ```
 
-> CPU-only PyTorch is enough for inference and the smoke test. For training,
-> an NVIDIA GPU is strongly recommended (free Google Colab T4 works).
-
-Verify the install in 30 seconds with the bundled demo + placeholder smoke weights:
+Verify in 30 s with the bundled demo + smoke weights (CPU is enough):
 
 ```bash
 python evaluate.py --input_dir demo/lq --output_dir demo/restored --weights tests/smoke/drishti_net_smoke.pt
 # expected: 4 restored 256x256 uint16 images in demo/restored + a latency line
 ```
 
-## 2. Inference (what the benchmark runs)
+### Inference — the exact zero-edit command the benchmark runs
 
 ```bash
 python evaluate.py --input_dir /path/to/degraded --output_dir /path/to/restored
-# flags: --weights weights/drishti_net.pt    --tta (8x self-ensemble, default OFF)
+# --weights weights/drishti_net.pt   --tta (8x self-ensemble, default OFF)
 ```
 
-- Zero manual edits: auto CUDA→CPU, FP16 with FP32 fallback, weights auto-download if URL set.
-- Reads `.png/.tif/.bmp/.jpg` **and `.npy`** (the KLA train format). `.npy` inputs are
-  restored as `.npy` with the same filename and dtype.
-- Outputs use the **same filenames and dtype/range as inputs** (uint8→uint8, uint16→uint16, float→float/.tif).
-- Preprocessing constants are read from the checkpoint config — fixed scale, never clips
-  (speckle legitimately exceeds the GT range; clipping would destroy measurements).
+- **Zero manual edits:** auto CUDA→CPU, FP16 with FP32 fallback, CPU-only fallback graceful.
+- Reads `.png/.tif/.bmp/.jpg` **and `.npy`** (the KLA train format); `.npy` out keeps name + dtype.
+- Outputs mirror **GT dtype and range exactly** (uint8→uint8, uint16→uint16, float→float/.tif).
 
-## 3. Day-0 data audit — run FIRST on the KLA dataset
+---
 
-Measures (never assumes) dtype/bit-depth, GT↔degraded size ratio, speckle family
-(multiplicative vs additive), blur σ (spectral MTF), additive noise floor, and
-random-searches our degradation engine to fingerprint the real corruption parameters:
+## 📊 Results — every number measured on our own harness, 160-frame held-out split
 
-```bash
-python scripts/day0_audit.py --gt_dir DATA/gt --lq_dir DATA/degraded --out audit_report --fit_engine
-# -> audit_report/audit.json + plots + recommended SCALE/ranges for MASTER_SPEC.md
+| Configuration | PSNR ↑ dB | SSIM ↑ | Loss recipe | Verdict |
+|---|--:|--:|---|---|
+| **Champion: M3e (FabLoss V2), step 21,000** | **29.33** | **0.7913** | Charb + 0.2·Sobel + 0.1·FFT-mag | **SHIPPED — beat gate on both** |
+| Gate-setter: M0r-v5, step 19,000 | 29.32 | 0.7911 | Charbonnier | baseline it beat |
+| Ablation M3a / M3d (+ control) | 13.20 / 13.48 | 0.3257 / 0.5606 | Charb + 0.5·MS-SSIM (±Sobel) | collapse — excised |
+| Ablation M3b | 29.31 | 0.7907 | Charb + 0.2·Sobel | safe ≠ useful |
+| Ablation M3c | 29.29 | 0.7924 | Charb + 0.1·FFT-mag | SSIM-lean → V2 seed |
+
+> **Honesty note:** margins under ~0.05 dB are within observed run-to-run variance and are not claimed as significant. Exact checkpoint values (13-decimal receipts) live in `reports/` + `MASTER_SPEC.md`.
+> SSIM = our Gaussian-window implementation (consistent internal comparator). Extended suite — edge-region PSNR, flat-region residual σ (lower = better) 0.0232, worst-10%-patch SSIM 0.7354, LPIPS **local-only diagnostic** — in `reports/M3e_30k.md` and `reports/M0r_v5.md` (dual `scripts/report.py` runs).
+
+### 🌐 OOD proxy — shown openly
+
+On a **synthetic degradation family no candidate ever trained on** (all checkpoints real-pairs-only; LANCZOS4 corner, seed 777, paired inputs): champion **25.46 dB / 0.604** · baseline 25.56 / 0.611 · FiLM variant 25.56 / 0.611 — all within 0.11 dB. **On this proxy, neither enhanced model improved over the real-only baseline** — evidence, not a prediction of the KLA test set. M0r-v5 (proxy-best) retained as fallback. (`reports/lodo_kernel3.md`, deterministic across reruns.)
+
+### ⏱️ Latency — synchronized trace, device labeled honestly
+
+| Metric | Value | Protocol |
+|---|--:|---|
+| Median | **16.53 ms/img** | 800 consecutive per-image-CUDA-sync'd frames |
+| p95 | 19.19 ms | SM-clock sampled trace (`scripts/latency_trace.py`) |
+| Streaming | 17.4 ms/img | full-folder pass, 3,200 images |
+
+Local **RTX 4060 Laptop GPU** benchmark — the GPU-ramp hypothesis was tested and *falsified* by the trace. No H100 projection; official timing is KLA's H100 harness. ~3.5 M-param model ≈ 14 MB fp32; a 30k-iter training run ≈ 1.5 h on this laptop.
+
+---
+
+## 🧠 Architecture
+
+```
+Input 128²/256²            NAF-style U-Net                 Output 256²/512²
+float32, native range  →   enc [2,2,4] → mid 4 → dec [2,2,2]  →  GT dtype & range
+[x/S, log1p(x/S)]          SimpleGate + SCA + LayerNorm          exact inversion
+2 ch · no clipping         no BatchNorm · PixelShuffle ×2        (mirrors input)
 ```
 
-## 4. Training
+- **NAF-style blocks** (SimpleGate, SCA, LayerNorm — SCA placement adapted, deliberate variant) · **3,468,585 params** (exact count printed from the shipped checkpoint).
+- **FiLM degradation conditioning** (z-NORM + tanh-bounded gains): revised implementation remained stable under 10k-step telemetry, eliminating the previously observed runaway behavior — but it did not beat the gate in budget, so the **shipped checkpoint keeps conditioning dormant** (claims gated by ablation, not by hope).
+- **FabLoss V2 (shipped):** Charbonnier + 0.2·Sobel + 0.1·FFT magnitude consistency (L1, orthonormal). **MS-SSIM (λ=0.5) rejected by measurement**: real-only arms collapsed to 13.20/13.48 dB with erratic gradient spikes to ×232/×736 (vs ≤0.2 in every stable arm) — excised by evidence, kept in-repo for the record.
+- Deliberately absent: diffusion / GAN (hallucination risk + fails the latency benchmark), MoE & hard routing (instability + branching latency), Mamba/SSM (toolchain risk on a clean benchmark machine), BatchNorm.
 
-```bash
-# synthetic-only start (after the Day-0 audit locks engine ranges):
-python train.py --gt_dir DATA/gt --level M0 --iters 30000 --batch 16
+---
 
-# with real KLA pairs mixed in (aux loss auto-masked on real pairs — two-batch-type rule):
-python train.py --gt_dir DATA/gt --real_lq DATA/degraded --real_gt DATA/gt --level M4 --iters 30000 --batch 16
-```
-
-Levels follow the experiment ladder (M0 baseline → M4 full + SEM/CutBlur/DW-Charb → M5 hardening);
-a component ships only if it beats the previous level on the validation suite (see `MASTER_SPEC.md`).
-Checkpoints land in `runs/<level>/latest.pt` — copy the final one to `weights/drishti_net.pt`.
-
-## 5. Repo map
+## 🏗️ Repo Map
 
 ```
-evaluate.py             zero-edit CLI inference (benchmark-critical)
+evaluate.py             zero-edit CLI inference (benchmark-critical) — the file judges run
 train.py                ladder-driven training: EMA, bf16 AMP, cosine LR, two-batch-type loader
-models/drishti_net.py   FiLM-conditioned NAFNet + supervised degradation encoder (3.47M params)
-data/degradation.py     synthetic degradation engine (returns true params for aux supervision)
-data/dataset.py         SyntheticDataset + RealPairsDataset (aux masked on real pairs)
-losses/fab_loss.py      FabLoss: Charbonnier (V1) · Charb+Sobel+FFT-mag (V2, shipped) · ablation terms kept for evidence
-utils/metrics.py        PSNR / SSIM / edge / flat-region residual σ / worst-patch / LPIPS diagnostic
-scripts/report.py       holdout metrics + timing harness (both champions, reports/*.md)
-scripts/latency_trace.py  per-image latency trace (cold-start vs steady-state reconciliation)
-scripts/lodo_eval.py    unseen-synthetic-family OOD generalization probe (eval-only; scope note in docstring)
-scripts/day0_audit.py   dataset fingerprinting (see §3)
-scripts/make_demo_data.py  synthetic wafer stand-in generator
-weights/                drishti_net.pt — THE shipped champion (exactly one model file)
-tests/smoke/            drishti_net_smoke.pt — smoke-test placeholder (development only)
-demo/                   4 sample pairs + restored outputs for a no-dataset install check
-docs/                   hackathon deck (KLA 9-slide template) + audit report + panels
-MASTER_SPEC.md          build-locked decisions, ablation ladder, validation protocol, vetoes
+weights/drishti_net.pt  THE shipped champion — exactly one model file
+models/  losses/  data/  utils/      net + FabLoss + degradation engine + metric suite
+scripts/report.py       holdout metrics + timing harness (both champions)
+scripts/latency_trace.py  800-frame synchronized latency trace with SM-clock sampling
+scripts/lodo_eval.py    unseen-synthetic-family OOD generalization probe (eval-only)
+scripts/make_panels.py  rule-based panel selection (texture floor; skipped frames printed)
+scripts/day0_audit.py   dataset fingerprinting (dtype, speckle family, MTF blur, engine fit)
+reports/                M3e_30k · M0r_v5 · lodo_kernel3 (md+json) · latency_trace.csv
+docs/panels/            A/B/C renders + panels_index.txt receipts
+docs/                   KLA 9-slide deck (final composed version) + audit report
+tests/smoke/            smoke weights (dev-only placeholder, power-on self-test)
+demo/                   4 sample pairs + restored outputs — no-dataset install check
+MASTER_SPEC.md          the full build/adjudication log: gates, falsifications, errata, receipts
 ```
 
-Status: SHIPPED — champion = FabLoss V2 (Charbonnier + 0.2·Sobel + 0.1·FFT-magnitude),
-gate-verified on the 160-frame held-out split (exact checkpoint values, full
-trajectories, and the dual report.py evidence are in reports/ and MASTER_SPEC.md §11).
-Every number in this repo is measured on recorded runs — nothing estimated.
+---
+
+## 🔬 Reproduce Any Number
+
+```bash
+python scripts/report.py --weights weights/drishti_net.pt --gt DATA/gt --lq DATA/degraded   # full metric suite
+python scripts/latency_trace.py --weights weights/drishti_net.pt                            # 16.53/19.19 receipt
+python scripts/lodo_eval.py --weights runs/M0r_v5/best.pt,runs/M3e_30k/best.pt --real_gt DATA/gt   # OOD proxy
+python scripts/make_panels.py --lq DATA/degraded --pred outputs/restored_train --gt DATA/gt --out docs/panels
+```
+
+Training arithmetic (Charbonnier + Sobel + FFT-mag weights, gate rule, ladder levels) is unit-tested in `scripts/test_losses.py` and locked in `MASTER_SPEC.md`.
+
+## 🎬 Demo
+
+[Watch the 90-second run video](PASTE-YOUTUBE-LINK-HERE) ← *replace with the upload link*
+
+## 📄 Deck & Paper Trail
+
+- `docs/DrishtiNet_KLA_PS01_final.pptx` — the 9-slide submission deck (this repo rendered it).
+- `docs/audit_report/` + `docs/reviewer_evidence_v5.md` — Day-0 census + multi-reviewer adjudication packs.
+- `MASTER_SPEC.md` — every gate, falsified hypothesis, erratum, and declined-with-reason demand, logged.
+
+**License:** MIT · **Status:** SHIPPED — champion = FabLoss V2, gate-verified on the held-out 160 pairs.

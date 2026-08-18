@@ -1059,3 +1059,13 @@ SUPERSEDED pre-spread panel set, committed before the A/B/C canonical set existe
 cleanup queued as an optional commit (git rm docs/panels/panel_003*.png); the A/B/C
 trio + panels_index.txt remain the canonical, reviewer-locked panels. Deck FILLs,
 video, and PDF export are the only items left; this entry closes the technical trail.
+
+### §13.1 — README polish round (2026-08-16)
+
+README rebuilt in the user's telegram-export-studio visual DNA (shields badges,
+emoji sections, tables, hero 3×3 panel grid via repo-relative <img> paths) while
+preserving every reviewer word-lock (battery re-run on the new README: all locks
+present, all banned phrasings absent, all 9 image paths verified on disk). Content
+upgraded to the final receipts: gate table, honesty note, scoped OOD proxy, latency
+protocol table, FabLoss V2 formula, repo map, reproduce-any-number commands, video
+placeholder (PASTE-YOUTUBE-LINK-HERE), MASTER_SPEC paper-trail pointer.
