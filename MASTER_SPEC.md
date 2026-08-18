@@ -1069,3 +1069,36 @@ present, all banned phrasings absent, all 9 image paths verified on disk). Conte
 upgraded to the final receipts: gate table, honesty note, scoped OOD proxy, latency
 protocol table, FabLoss V2 formula, repo map, reproduce-any-number commands, video
 placeholder (PASTE-YOUTUBE-LINK-HERE), MASTER_SPEC paper-trail pointer.
+
+### §13.2 — Demo stand-in characterization (builder self-check, 2026-08-18)
+
+Measured on the synthetic install-check stand-ins (make_demo_data.py): GT 256²,
+LQ 128² (task format ✓), naive-bilinear-upscale baseline PSNR vs GT 17.77–21.12 dB;
+smoke placeholder 16.56–18.71 dB (below baseline — placeholder, expected);
+champion restored_ship 18.08–21.38 dB — ABOVE both on all four frames
+(Δ +0.12…+0.31 dB vs naive) with clearly visible denoising. Interpretation logged:
+stand-ins are OFF-distribution content (resolution-chart patterns, mild degradation,
+GT carries fine grain) → champion advantage compresses toward baseline, same shape as
+the measured LODO result. DECISION: demo PSNR quoted NOWHERE (README/deck audited —
+already clean); quality statements cite only the real-data holdout (29.33 dB /
+0.7913, panels 29.07/37.22/23.87). Post-deadline queue: regenerate demo stand-ins
+with the census-fingerprinted degradation engine so the quickstart doubles as a
+true quality demo. (User-facing takeaway delivered: denoise visual on wafer_002.)
+
+### §13.3 — Demo dark-speckle finding (Claude r16 visual call, builder-quantified)
+
+Claude flagged dark speckle persisting on restored bright bars in demo wafer_002;
+quantified on the champion's committed output (bright-structure mask = 15% of frame,
+>0.20-depth outliers): GT 0.00% · degraded LQ 5.86% · champion 6.78% — the model
+SHARPENS deep-dark speckle outliers on this synthetic stand-in content rather than
+removing them (its learned degradation fingerprint doesn't match the stand-in
+generator's; same off-distribution signature as LODO/§13.2). Real-data denoising
+claim is UNAFFECTED and separately evidenced (flat-region residual σ = 0.0232 on the
+160-frame holdout; A/B/C pred-vs-lq panels show clear noise removal — measured +
+visually verified in rounds 11–14). RULES ADOPTED (Claude's wording): (1) video and
+any demo narration claims "visible structure recovery relative to the degraded
+input" for the synthetic stand-ins — the words "clean", "speckle-free", "artifact-
+free" are banned from narration; (2) denoising claims are made ONLY with real-data
+panels/reports; (3) the docs/panels A/B/C set remains the quality showcase. The
+post-deadline demo-engine overhaul (§13.2 queue) is now a PRIORITY item, since the
+install-check asset currently under-sells and partially mis-signals the model.
